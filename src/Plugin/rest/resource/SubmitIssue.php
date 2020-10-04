@@ -94,7 +94,7 @@ class SubmitIssue extends ResourceBase {
       $module = 'rest_feedback_endpoint';
       $key = 'rest_feedback_endpoint';
       $to = $config->get('notification_email');
-      $params['message'] = 'The user ' . $name . ' has reported an issue with the Crow web interface.' . PHP_EOL . PHP_EOL;
+      $params['message'] = 'The user ' . $name . ' has reported an issue with the interface.' . PHP_EOL . PHP_EOL;
       $params['message'] .= 'SOURCE PAGE: ' . $data['url'] . PHP_EOL . PHP_EOL;
       $params['message'] .= 'DESCRIPTION: ' . Html::escape($data['description']) . PHP_EOL . PHP_EOL;
       $params['message'] .= 'USER ACCESS LEVEL: ' . implode(', ', $reported_roles) . PHP_EOL . PHP_EOL;
@@ -106,7 +106,7 @@ class SubmitIssue extends ResourceBase {
       else {
         $params['message'] .= 'CONTACT USER WITH UPDATES ABOUT THE ISSUE: no' . PHP_EOL . PHP_EOL;
       }
-      $params['title'] = Html::escape($data['title']);
+      $params['title'] = $config->get('subject_line_prefix') . Html::escape($data['title']);
       $langcode = \Drupal::currentUser()->getPreferredLangcode();
       $send = TRUE;
       $response_status['status'] = $mailManager->mail($module, $key, $to, $langcode, $params, NULL, $send);

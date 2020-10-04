@@ -49,6 +49,12 @@ class Settings extends ConfigFormBase {
       '#description' => $this->t('Single email only'),
       '#default_value' => $config->get('notification_email'),
     ];
+    $form['subject_line_prefix'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Subject line prefix'),
+      '#description' => $this->t('Prepend the subject line of the email (e.g. "Mysite user feedback: ".'),
+      '#default_value' => $config->get('subject_line_prefix'),
+    ];
     return parent::buildForm($form, $form_state);
   }
 
@@ -60,6 +66,7 @@ class Settings extends ConfigFormBase {
     $this->configFactory->getEditable(static::SETTINGS)
       ->set('on', $form_state->getValue('on'))
       ->set('notification_email', $form_state->getValue('notification_email'))
+      ->set('subject_line_prefix', $form_state->getValue('subject_line_prefix'))
       ->save();
     parent::submitForm($form, $form_state);
   }

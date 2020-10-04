@@ -84,8 +84,8 @@ class SubmitIssue extends ResourceBase {
       return new ResourceResponse($response_status);
     }
     if (!empty($data['title']) && !empty($data['description'])) {
-      $roles = $this->currentUser->getRoles();
       $user = User::load($this->currentUser->id());
+      $roles = $user->getRoles();
       $name = $user->get('field_full_name');
       $name = $name[0]['value'] ?? $this->currentUser->getUsername();
       $reported_roles = array_diff($roles, ['authenticated', 'administrator']);

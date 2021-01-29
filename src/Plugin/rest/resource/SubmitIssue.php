@@ -115,7 +115,7 @@ class SubmitIssue extends ResourceBase {
       // Basecamp integration.
       $project = $config->get('basecamp_project');
       $todolist = $config->get('basecamp_list');
-      $assignees = $config->get('basecamp_assignees');
+      $assignees = $config->get('basecamp_assignee_ids');
       if ($project && $todolist) {
         $data = [
           'content' => $params['title'],

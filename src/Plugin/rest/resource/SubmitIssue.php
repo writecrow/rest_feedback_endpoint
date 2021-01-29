@@ -2,6 +2,7 @@
 
 namespace Drupal\rest_feedback_endpoint\Plugin\rest\resource;
 
+use Drupal\basecamp_api\Basecamp;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\rest\Plugin\ResourceBase;
@@ -110,6 +111,23 @@ class SubmitIssue extends ResourceBase {
       $langcode = \Drupal::currentUser()->getPreferredLangcode();
       $send = TRUE;
       $response_status['status'] = $mailManager->mail($module, $key, $to, $langcode, $params, NULL, $send);
+
+      // Basecamp integration.
+      $project = $config->get('basecamp_project');
+      $todolist = $config->get('basecamp_list');
+      $assignees = $config->get('basecamp_assignees');
+      if ($project && $todolist) {
+        $data = [
+          'content' => $params['title'],
+          'description' => $params['message'],
+          'due_on' => date('Y-m-d', strtotime('+7 days')),
+          'notify' => TRUE,
+        ];
+        if (!empty($assignees)) {
+          $data['assignee_ids'] = explode(',', $assignees);
+        }
+        Basecamp::createTodo($project, $todolist, $data);
+      }
     }
     $response = new ResourceResponse($response_status);
     return $response;

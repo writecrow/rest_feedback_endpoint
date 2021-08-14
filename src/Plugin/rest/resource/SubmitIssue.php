@@ -87,8 +87,8 @@ class SubmitIssue extends ResourceBase {
     if (!empty($data['title']) && !empty($data['description'])) {
       $user = User::load($this->currentUser->id());
       $roles = $user->getRoles();
-      $name = $user->get('field_full_name');
-      $name = $name[0]['value'] ?? $this->currentUser->getDisplayName();
+      $full_name = $user->get('field_full_name')->getString();
+      $name = $full_name ?? $this->currentUser->getDisplayName();
       $reported_roles = array_diff($roles, ['authenticated', 'administrator']);
 
       $mailManager = \Drupal::service('plugin.manager.mail');

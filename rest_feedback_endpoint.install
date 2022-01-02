@@ -14,9 +14,7 @@ function rest_feedback_endpoint_install() {
   $route_builder->rebuild();
 
   $messenger->addMessage(t('Thanks for installing the REST Feedback endpoint'));
-  $messenger->addMessage(t('1. Configure feedback settings at <a href="@url_settings">/admin/config/rest-feedback-endpoint</a>', [
-    '@url_settings' => Url::fromRoute('rest_feedback_endpoint.settings')->toString(),
-  ]));
+  $messenger->addMessage(t('1. Configure feedback settings at <a href="/admin/config/services/rest">/admin/config/rest-feedback-endpoint</a>'));
   $messenger->addMessage(t('2. Enable the "Submit an Issue" endpoint at <a href="@rest">/admin/config/services/rest</a>: <ul><li>Granularity: "resource"</li><li>method: "POST"</li><li>authentication providers: oauth2</li></ul>', [
     '@rest' => Url::fromRoute('restui.list')->toString(),
   ]));

@@ -6,7 +6,7 @@ use Drupal\basecamp_api\Basecamp;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\rest\Plugin\ResourceBase;
-use Drupal\rest\ResourceResponse;
+use Drupal\rest\ModifiedResourceResponse;
 use Drupal\user\Entity\User;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -78,7 +78,6 @@ class SubmitIssue extends ResourceBase {
   public function post($data) {
     // Permission to access this endpoint is determined via
     // Drupal permissioning, at /admin/people/permissions#module-rest.
-    $response_status['status'] = FALSE;
     \Drupal::logger('rest_feedback_endpoint')->notice(serialize($data));
     $config = \Drupal::config('rest_feedback_endpoint.settings');
     if (!$config->get('on')) {
@@ -110,7 +109,7 @@ class SubmitIssue extends ResourceBase {
       $params['title'] = $config->get('subject_line_prefix') . Html::escape($data['title']);
       $langcode = \Drupal::currentUser()->getPreferredLangcode();
       $send = TRUE;
-      $response_status['status'] = $mailManager->mail($module, $key, $to, $langcode, $params, NULL, $send);
+      $mailManager->mail($module, $key, $to, $langcode, $params, NULL, $send);
 
       // Basecamp integration.
       $project = $config->get('basecamp_project');
@@ -126,11 +125,13 @@ class SubmitIssue extends ResourceBase {
         if (!empty($assignees)) {
           $data['assignee_ids'] = explode(',', $assignees);
         }
-        Basecamp::createTodo($project, $todolist, $data);
+        $transaction = Basecamp::createTodo($project, $todolist, $data);
       }
     }
-    $response = new ResourceResponse($response_status);
-    return $response;
+    if (!$transaction) {
+      return new ModifiedResourceResponse(['Could not communicate with Basecamp'], 500);
+    }
+    return new ModifiedResourceResponse(['Sent'], 200);
   }
 
 }

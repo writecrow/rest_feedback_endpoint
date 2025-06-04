@@ -1,7 +1,7 @@
 name: 'Feedback endpoint'
 description: 'Simple way to report bugs, including context-specific metadata over oauth'
 type: module
-core_version_requirement: '^9 || ^10'
+core_version_requirement: '>=10'
 package: 'rest'
 dependencies:
   - user
